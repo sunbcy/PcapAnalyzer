@@ -34,6 +34,14 @@ def find_LAN_IP(pkts):#找出一个数据包的源IP地址 原理用头10个流�
 		print('找不到源IP')
 		return None
 	
+def find_pcap(files):
+	all_pcap=[]
+	for file in files:
+		if not os.path.isdir(file):
+			pcap_find=re.match(pcap_mode,file)
+			if pcap_find:
+				all_pcap.append(file)
+	return all_pcap
 
 if __name__ == '__main__':
 	src_host_list=[]
@@ -48,14 +56,9 @@ if __name__ == '__main__':
 		pass
 	analysed_path=os.path.join(CURRENT_PATH,'ANALYZED_PCAP')
 	files=os.listdir(wait_analysed_path)
-
+	all_pcap=find_pcap(files)
 	pcap_mode='(.*?).p?cap(ng)?$'
-	all_pcap=[]
-	for file in files:
-		if not os.path.isdir(file):
-			pcap_find=re.match(pcap_mode,file)
-			if pcap_find:
-				all_pcap.append(file)
+	
 
 	other_ip_proto={}
 	for pcap in all_pcap:
