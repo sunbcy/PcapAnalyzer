@@ -150,7 +150,8 @@ if __name__ == '__main__':
 			for pktno in range(len(pkts)):
 				try:
 					if 'IP' not in pkts[pktno] and 'ARP' in pkts[pktno]:
-						print(f'第{pktno+1}个流 ARP')#抓包在链路层有时候会抓到ARP，没有五元组信息
+						pass
+						# print(f'第{pktno+1}个流 ARP')#抓包在链路层有时候会抓到ARP，没有五元组信息
 					elif 'IP' in pkts[pktno] and pkts[pktno]['IP'].proto==0:
 						print(f'第{pktno+1}个流 HOPOPT')#IPv6逐跳选项
 					elif 'IP' in pkts[pktno] and pkts[pktno]['IP'].proto==1:
@@ -310,4 +311,4 @@ if __name__ == '__main__':
 			print('Warning：No data could be read!!!\n数据包格式有误')
 
 		print(f'新出现的IP proto：\n{other_ip_proto}')
-		break
+		# break
