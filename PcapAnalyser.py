@@ -5,8 +5,8 @@ logging.getLogger("scapy.runtime").setLevel(logging.ERROR)#此一句去掉命令
 from scapy.all import *
 from scapy_ssl_tls.ssl_tls import *
 import re,os,shutil,sys,json
-# from urllib.parse import quote,unquote
-import codecs
+from urllib.parse import quote,unquote
+# import codecs
 
 """
 端口范围：0~65535，
@@ -15,8 +15,6 @@ import codecs
 动态/私有端口（Dynamic and/or Private Ports）：49152-65535，被操作系统动态分配；
 """
 
-# reload(sys)
-# sys.setdefaultencoding('utf-8')
 def find_LAN_IP(pkts):#找出一个数据包的源IP地址 原理用头10个流检测每个流都有的IP
 	LAN_IP=pkts[0]['IP'].src#注意：第一个流可能是ARP，则没有IP层
 	OTHER_IP=pkts[0]['IP'].dst
@@ -54,8 +52,30 @@ def find_pcap(files):
 	return all_pcap
 
 def hex2visible_str(hex_string):
-	str_len=len(hex_string)
-
+	hex_list=[]
+	ret_hex=''
+	while(len(hex_string)):
+		hex_list.append(hex_string[0:2])
+		hex_string=hex_string[2:]
+	for i in hex_list:
+		if ('a' in i[1] or 'b' in i[1] or 'c' in i[1] or 'd' in i[1] or 'e' in i[1] or 'f' in i[1]) and i[0] not in 'abcdef':
+			if i[0].isdigit():
+				if  2<=int(i[0])<=7:
+					ret_hex+=unquote('%'+i)
+				else:
+					ret_hex+='.'
+			else:
+				ret_hex+='.'
+		else:
+			if i[0].isdigit():
+				if 0x20<=int(int(i[0])*16+int(i[1])) <=0x7e:
+					# print(unquote('%'+i))
+					ret_hex+=unquote('%'+i)
+				else:
+					ret_hex+='.'
+			else:
+				ret_hex+='.'
+	return ret_hex
 
 if __name__ == '__main__':
 	src_host_list=[]
@@ -72,8 +92,6 @@ if __name__ == '__main__':
 	files=os.listdir(wait_analysed_path)
 	all_pcap=find_pcap(files)
 	
-	
-
 	other_ip_proto={}
 	for pcap in all_pcap:
 		ALL_SSL=[]
@@ -154,11 +172,14 @@ if __name__ == '__main__':
 						# print(f'第{pktno+1}个流 TCP')#传输控制协议（TCP）
 						# print('{}:{} {}:{} {}'.format(pkts[pktno]['IP'].src,pkts[pktno]['IP'].sport,pkts[pktno]['IP'].dst,pkts[pktno]['IP'].dport,pkts[pktno]['IP'].proto))
 						if pkts[pktno]['IP'].dport==80 and 'Raw' in pkts[pktno]:
+							print(f'第{pktno+1}个流 TCP')#传输控制协议（TCP）
 							http_content=pkts[pktno]['Raw'].load
 							http_content_hex=pkts[pktno]['Raw'].load.hex()#
-							byte_array=bytearray.fromhex(http_content_hex)
-							print(byte_array.decode('hex'))
-							# print(codecs.decode(http_content_hex,'hex'))
+							hex_format=hex2visible_str(http_content_hex)
+							print(hex_format)
+							# byte_array=bytearray.fromhex(http_content_hex)
+							# print(byte_array.decode('hex'))
+							# print(codecs.decode(http_content_hex,'hex')) m
 					elif 'IP' in pkts[pktno] and pkts[pktno]['IP'].proto==7:
 						print(f'第{pktno+1}个流 CBT')#有核树组播路由协议
 					elif 'IP' in pkts[pktno] and pkts[pktno]['IP'].proto==8:
