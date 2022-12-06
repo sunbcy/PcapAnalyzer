@@ -297,7 +297,7 @@ if __name__ == '__main__':
                                 if visible_ascii[:3]=='GET':
                                     if visible_ascii not in ALL_TCP:
                                         print(f'第{pktno+1}个流 HTTP/GET')
-                                        print(pkts[pktno]['TCP'].flags)
+                                        # print(pkts[pktno]['TCP'].flags)
                                         # print(http_content_hex+'\n')
                                         # print(http_content_hex.split('0d0a'))
                                         # break
