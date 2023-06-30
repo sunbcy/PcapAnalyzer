@@ -219,6 +219,7 @@ if __name__ == '__main__':
 
         pkts_json_name = pcap.split('cap')[-2].split('.')[-2]+'.json'
         pkts_txt_name = pcap.split('cap')[-2].split('.')[-2]+'.txt'
+        pkts_txt = open(pkts_txt_name, 'w', encoding='utf-8')
 
         print(f'\n分析 {pcap} ing!!!')
         logger.info(f'\n分析 {pcap} ing!!!')
@@ -234,8 +235,6 @@ if __name__ == '__main__':
                 logger.info('未发现有效源IP，异常退出，请老大检查您的函数！')
                 time.sleep(5)
                 quit()
-            # pkts_json=open(pkts_json_name,'w')
-            pkts_txt = open(pkts_txt_name, 'w', encoding='utf-8')
             """linux下通过tcpdump命令抓的包通常数据链路层不是Ethernet,而是cooked linux"""
             # print(len(pkts))# test1.pcapng 在wireshark中的No. 为1-5286 此处len(pkts)也为5286，吻合
             # print(pkts[1]['IP'].src)#源地址IP
