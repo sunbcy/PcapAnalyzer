@@ -1,1 +1,4 @@
-*.pcap
+*.pcap*
+*.log
+.idea/
+*.txt
